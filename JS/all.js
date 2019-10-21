@@ -2603,34 +2603,41 @@ const data = [{
 
 init()
 
+// 初始函式
 function init() {
 
     // 監聽事件
     const selectMenu = document.querySelector('.select-menu__list');
     const areasBtn = Array.from(document.querySelectorAll('.hot-area__link'));
-    selectMenu.addEventListener('change', update);
-    areasBtn.forEach(btn => btn.addEventListener('click', update))
+    selectMenu.addEventListener('change', selectedItem);
+    areasBtn.forEach(btn => btn.addEventListener('click', selectedItem))
 
     // 初始選單呈現
     const allArea = data.map(current => current.Zone)
     const areaMenu = [...(new Set(allArea))];
     const areaMenuUI = `${areaMenu.map(current=>`<option value ="${current}" class="select-menu__item">${current}</option>`).join('')}`;
     selectMenu.insertAdjacentHTML('beforeend', areaMenuUI);
+
+    //讀取所有資料
+    update(data);
+
 }
 
-
-function update(e) {
-
+// 選取函式
+function selectedItem(e) {
     e.preventDefault();
-
-    // 確認是select還是btn已決定e.target讀取方式
+    // 確認讀取方式
     const selected = e.target.nodeName === 'SELECT' ? e.target.value : e.target.textContent;
     const selectedArea = data.filter(current =>
         current.Zone === selected)
+    update(selectedArea)
+}
 
-    // rendering
+// 畫面更新
+function update(selectedArea) {
     const areas = document.querySelector('.areas');
-    const title = `<h2 class="heading-2"> ${selected} </h2>`
+    const titleName = selectedArea === data ? '所有地區' : selectedArea[0].Zone
+    const title = `<h2 class="heading-2">${titleName}</h2>`
     const cards = `<div class = "area-cards">${selectedArea.map(current=>
     `<div class = "area-card">
         <div class = "area-card__img" style = "background-image: url(${current.Picture1})" >
